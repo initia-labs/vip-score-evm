@@ -1,5 +1,17 @@
 # VIP Score
 
+## Compile
+
+```bash
+npm run compile
+```
+
+## Test
+
+```bash
+npm run test
+```
+
 ## Constructor
 
 Set sender to default member of allowList.
@@ -94,68 +106,36 @@ struct StageInfo {
 mapping(uint64 => StageInfo) public stages;
 ```
 
-Response type
+### `scores`
+
+mapping of user score
 
 ```solidity
-{
-  "stage": 123,
-  "addr": "init1...",
-  "score": 123
+struct ScoreResponse {
+    address addr;
+    uint64 amount;
+    uint64 index;
 }
+
+mapping(uint64 => mapping(address => Score)) public scores; // stage => address => score
 ```
 
-### `get_scores`
+## View functions
 
-Get scores of given stage
+### `getScores`
 
-```solidity
-{
-  "get_scores": {
-    "stage": 123, // stage
-    "limit": 123, // amount of result (max: 255)
-    "start_after": "init1..." // optional, where to begin fetching the next batch of results
-  }
-}
-```
-
-Response type
+Get scores
 
 ```solidity
-{
-  "scores": [
-    {
-      "stage": 123,
-      "addr": "init1...",
-      "score": 123
-    },
-    {
-      "stage": 123,
-      "addr": "init1...",
-      "score": 123
-    },
-    ...
-  ]
-}
-```
-
-### `get_stage_info`
-
-Get stage info
-
-```solidity
-{
-  "get_stage_info": {
-    "stage": 123 // stage
-  }
-}
+function getScores(uint64 stage, uint64 offset, uint8 limit) public view returns (ScoreResponse[] memory)
 ```
 
 Response type
 
 ```solidity
-{
-  "stage": 123,
-  "total_score": 123,
-  "is_finalized": false
+struct ScoreResponse {
+    address addr;
+    uint64 amount;
+    uint64 index;
 }
 ```
