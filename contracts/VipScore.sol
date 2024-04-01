@@ -41,20 +41,7 @@ contract VipScore {
 
     function prepareStage(uint64 stage) external {
         checkPermission(msg.sender);
-        if (stage == 0) {
-            revert ZeroStage({});
-        }
-
-        if (stages[stage].stage != 0) {
-            return;
-        }
-
-        StageInfo storage stageInfo = stages[stage];
-        stageInfo.stage = stage;
-        stageInfo.totalScore = 0;
-        stageInfo.isFinalized = false;
-
-        emit PrepareStage(stage);
+        _prepareStage(stage);
     }
 
     function finalizeStage(uint64 stage) external {
@@ -72,6 +59,7 @@ contract VipScore {
 
     function increaseScore(uint64 stage, address addr, uint64 amount) external {
         checkPermission(msg.sender);
+        _prepareStage(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -93,6 +81,7 @@ contract VipScore {
 
     function decreaseScore(uint64 stage, address addr, uint64 amount) external {
         checkPermission(msg.sender);
+        _prepareStage(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -114,12 +103,14 @@ contract VipScore {
 
     function updateScore(uint64 stage, address addr, uint64 amount) external {
         checkPermission(msg.sender);
+        _prepareStage(stage);
 
         _updateScore(stage, addr, amount);
     }
 
     function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external {
         checkPermission(msg.sender);
+        _prepareStage(stage);
 
         if (addrs.length != amounts.length) {
             revert AddrsAndAmountsLengthMistmatch({});
@@ -162,6 +153,24 @@ contract VipScore {
 
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
+
+    function _prepareStage(uint64 stage) private {
+        if (stage == 0) {
+            revert ZeroStage({});
+        }
+
+        if (stages[stage].stage != 0) {
+            return;
+        }
+
+        StageInfo storage stageInfo = stages[stage];
+        stageInfo.stage = stage;
+        stageInfo.totalScore = 0;
+        stageInfo.isFinalized = false;
+
+        emit PrepareStage(stage);
+    }
+
 
     function checkPermission(address sender) private view {
         if (!allowList[sender]) {
