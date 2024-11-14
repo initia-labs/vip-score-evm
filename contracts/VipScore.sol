@@ -178,7 +178,7 @@ contract VipScore {
         }
     }
 
-    function getScores(uint64 stage, uint64 offset, uint8 limit) public view returns (ScoreResponse[] memory) {
+    function getScores(uint64 stage, uint64 offset, uint64 limit) public view returns (ScoreResponse[] memory) {
         ScoreResponse[] memory response = new ScoreResponse[](limit);
         for (uint64 i; i < limit; i++) {
             uint64 index = i + offset + 1;
