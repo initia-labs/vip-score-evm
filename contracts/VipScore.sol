@@ -58,6 +58,11 @@ contract VipScore {
     }
 
     function increaseScore(uint64 stage, address addr, uint64 amount) external {
+        // ignore if address is 0x0
+        if (addr == address(0x0)) {
+            return;
+        }
+
         checkPermission(msg.sender);
         _prepareStage(stage);
 
@@ -80,6 +85,11 @@ contract VipScore {
     }
 
     function decreaseScore(uint64 stage, address addr, uint64 amount) external {
+        // ignore if address is 0x0
+        if (addr == address(0x0)) {
+            return;
+        }
+
         checkPermission(msg.sender);
         _prepareStage(stage);
 
@@ -135,6 +145,11 @@ contract VipScore {
     }
 
     function _updateScore(uint64 stage, address addr, uint64 amount) private {
+        // ignore if address is 0x0
+        if (addr == address(0x0)) {
+            return;
+        }
+
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
         }
