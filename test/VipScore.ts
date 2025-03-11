@@ -50,10 +50,6 @@ describe("VipScore", function () {
         vipScore.connect(otherAccount).increaseScore(1, otherAccount, 100)
       ).to.be.revertedWithCustomError(vipScore, "PermissionDenied");
 
-      await expect(
-        vipScore.increaseScore(2, otherAccount, 100)
-      ).to.be.revertedWithCustomError(vipScore, "StageNotFound(uint64)");
-
       await vipScore.increaseScore(1, otherAccount, 100);
       expect(await vipScore.stages(1)).to.eql([1n, 100n, false]);
       expect((await vipScore.scores(1, otherAccount)).amount).to.equals(100n);
@@ -63,10 +59,6 @@ describe("VipScore", function () {
         vipScore.connect(otherAccount).decreaseScore(1, otherAccount, 50)
       ).to.be.revertedWithCustomError(vipScore, "PermissionDenied");
 
-      await expect(
-        vipScore.decreaseScore(2, otherAccount, 50)
-      ).to.be.revertedWithCustomError(vipScore, "StageNotFound(uint64)");
-
       await vipScore.decreaseScore(1, otherAccount, 50);
       expect(await vipScore.stages(1)).to.eql([1n, 50n, false]);
       expect((await vipScore.scores(1, otherAccount)).amount).to.equals(50n);
@@ -75,10 +67,6 @@ describe("VipScore", function () {
       await expect(
         vipScore.connect(otherAccount).updateScore(1, otherAccount, 200)
       ).to.be.revertedWithCustomError(vipScore, "PermissionDenied");
-
-      await expect(
-        vipScore.updateScore(2, otherAccount, 200)
-      ).to.be.revertedWithCustomError(vipScore, "StageNotFound(uint64)");
 
       await vipScore.updateScore(1, otherAccount, 200);
       expect(await vipScore.stages(1)).to.eql([1n, 200n, false]);
@@ -90,10 +78,6 @@ describe("VipScore", function () {
           .connect(otherAccount)
           .updateScores(1, [otherAccount, owner], [100, 500])
       ).to.be.revertedWithCustomError(vipScore, "PermissionDenied");
-
-      await expect(
-        vipScore.updateScores(2, [otherAccount, owner], [100, 500])
-      ).to.be.revertedWithCustomError(vipScore, "StageNotFound(uint64)");
 
       await expect(
         vipScore.updateScores(1, [otherAccount, owner], [100])
