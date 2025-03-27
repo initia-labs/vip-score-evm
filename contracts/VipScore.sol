@@ -6,6 +6,7 @@ error ZeroStage();
 error AddrsAndAmountsLengthMistmatch();
 error StageNotFound(uint64 stage);
 error StageFinalized(uint64 stage);
+error PreviousStageNotFinalized(uint64 stage);
 
 event PrepareStage(uint64 stage);
 event FinalizeStage(uint64 stage);
@@ -29,6 +30,7 @@ contract VipScore {
         uint64 index;
     }
 
+    uint64 public initStage;
     mapping(uint64 => StageInfo) public stages;
     mapping(uint64 => mapping(address => Score)) public scores; // stage => address => score
     mapping(uint64 => mapping(uint64 => address)) private scoreKeys; // stage => index => address (for iterable mapping)
@@ -46,6 +48,7 @@ contract VipScore {
 
     function finalizeStage(uint64 stage) external {
         checkPermission(msg.sender);
+        checkPreviousStageFinalized(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -214,6 +217,24 @@ contract VipScore {
             score.isIndexed = true;
             scoreLength[stage] += 1;
             scoreKeys[stage][scoreLength[stage]] = addr;
+        }
+    }
+
+    function checkPreviousStageFinalized(uint64 stage) private {
+        // check first stage
+        if (initStage == 0) {
+            initStage = stage;
+            return;
+        }
+
+        StageInfo memory previousStage = stages[stage - 1];
+        // if previous stage doesn't exists
+        if (previousStage.stage == 0) {
+            revert StageNotFound(stage - 1);
+        }
+
+        if (!previousStage.isFinalized) {
+            revert PreviousStageNotFinalized(stage - 1);
         }
     }
 }
