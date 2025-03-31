@@ -14,11 +14,13 @@ npm run test
 
 ## Constructor
 
-Set sender to default member of allowList.
+Set sender to default member of allowList and set start stage.
 
 ```solidity
-constructor() {
+constructor(uint64 initStage_) {
     allowList[msg.sender] = true;
+    initStage = initStage_;
+    createStage(initStage);
 }
 ```
 
