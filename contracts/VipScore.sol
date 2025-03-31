@@ -48,7 +48,6 @@ contract VipScore {
 
     function finalizeStage(uint64 stage) external {
         checkPermission(msg.sender);
-        checkPreviousStageFinalized(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -173,6 +172,7 @@ contract VipScore {
     }
 
     function _prepareStage(uint64 stage) private {
+        checkPreviousStageFinalized(stage);
         if (stage == 0) {
             revert ZeroStage({});
         }
