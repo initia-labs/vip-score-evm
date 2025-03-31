@@ -43,9 +43,14 @@ contract VipScore {
         createStage(initStage);
     }
 
-    function finalizeStage(uint64 stage) external {
-        checkPermission(msg.sender);
+    modifier onlyAllower() {
+        if (!allowList[msg.sender]) {
+            revert PermissionDenied({deniedAddress: msg.sender});
+        }
+        _;
+    }
 
+    function finalizeStage(uint64 stage) external onlyAllower{
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
         }
@@ -58,13 +63,11 @@ contract VipScore {
         createStage(stage + 1);
     }
 
-    function increaseScore(uint64 stage, address addr, uint64 amount) external {
+    function increaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
         // ignore if address is 0x0
         if (addr == address(0x0)) {
             return;
         }
-
-        checkPermission(msg.sender);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -84,13 +87,11 @@ contract VipScore {
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
 
-    function decreaseScore(uint64 stage, address addr, uint64 amount) external {
+    function decreaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
         // ignore if address is 0x0
         if (addr == address(0x0)) {
             return;
         }
-
-        checkPermission(msg.sender);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -110,15 +111,11 @@ contract VipScore {
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
 
-    function updateScore(uint64 stage, address addr, uint64 amount) external {
-        checkPermission(msg.sender);
-
+    function updateScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
         _updateScore(stage, addr, amount);
     }
 
-    function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external {
-        checkPermission(msg.sender);
-
+    function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external onlyAllower{
         if (addrs.length != amounts.length) {
             revert AddrsAndAmountsLengthMistmatch({});
         }
@@ -129,15 +126,11 @@ contract VipScore {
         }
     }
 
-    function addAllowList(address addr) external {
-        checkPermission(msg.sender);
-
+    function addAllowList(address addr) external onlyAllower{
         allowList[addr] = true;
     }
 
-    function removeAllowList(address addr) external {
-        checkPermission(msg.sender);
-
+    function removeAllowList(address addr) external onlyAllower{
         delete allowList[addr];
     }
 
@@ -181,13 +174,6 @@ contract VipScore {
         stageInfo.isFinalized = false;
 
         emit CreateStage(stage);
-    }
-
-
-    function checkPermission(address sender) private view {
-        if (!allowList[sender]) {
-            revert PermissionDenied({deniedAddress: sender});
-        }
     }
 
     function getScores(uint64 stage, uint64 offset, uint64 limit) public view returns (ScoreResponse[] memory) {
