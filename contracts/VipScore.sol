@@ -8,7 +8,7 @@ error StageNotFound(uint64 stage);
 error StageFinalized(uint64 stage);
 error PreviousStageNotFinalized(uint64 stage);
 
-event PrepareStage(uint64 stage);
+event CreateStage(uint64 stage);
 event FinalizeStage(uint64 stage);
 event UpdateScore(address indexed addr, uint64 indexed stage, uint64 score, uint64 totalScore);
 
@@ -37,13 +37,10 @@ contract VipScore {
     mapping(uint64 => uint64) private scoreLength; // stage => count of score length (for iterable mapping)
     mapping(address => bool) public allowList;
 
-    constructor() {
+    constructor(uint64 initStage_) {
         allowList[msg.sender] = true;
-    }
-
-    function prepareStage(uint64 stage) external {
-        checkPermission(msg.sender);
-        _prepareStage(stage);
+        initStage = initStage_;
+        createStage(initStage);
     }
 
     function finalizeStage(uint64 stage) external {
@@ -57,6 +54,8 @@ contract VipScore {
         stageInfo.isFinalized = true;
 
         emit FinalizeStage(stage);
+
+        createStage(stage + 1);
     }
 
     function increaseScore(uint64 stage, address addr, uint64 amount) external {
@@ -66,7 +65,6 @@ contract VipScore {
         }
 
         checkPermission(msg.sender);
-        _prepareStage(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -93,7 +91,6 @@ contract VipScore {
         }
 
         checkPermission(msg.sender);
-        _prepareStage(stage);
 
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
@@ -115,14 +112,12 @@ contract VipScore {
 
     function updateScore(uint64 stage, address addr, uint64 amount) external {
         checkPermission(msg.sender);
-        _prepareStage(stage);
 
         _updateScore(stage, addr, amount);
     }
 
     function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external {
         checkPermission(msg.sender);
-        _prepareStage(stage);
 
         if (addrs.length != amounts.length) {
             revert AddrsAndAmountsLengthMistmatch({});
@@ -171,8 +166,7 @@ contract VipScore {
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
 
-    function _prepareStage(uint64 stage) private {
-        checkPreviousStageFinalized(stage);
+    function createStage(uint64 stage) private {
         if (stage == 0) {
             revert ZeroStage({});
         }
@@ -186,7 +180,7 @@ contract VipScore {
         stageInfo.totalScore = 0;
         stageInfo.isFinalized = false;
 
-        emit PrepareStage(stage);
+        emit CreateStage(stage);
     }
 
 
@@ -217,24 +211,6 @@ contract VipScore {
             score.isIndexed = true;
             scoreLength[stage] += 1;
             scoreKeys[stage][scoreLength[stage]] = addr;
-        }
-    }
-
-    function checkPreviousStageFinalized(uint64 stage) private {
-        // check first stage
-        if (initStage == 0) {
-            initStage = stage;
-            return;
-        }
-
-        StageInfo memory previousStage = stages[stage - 1];
-        // if previous stage doesn't exists
-        if (previousStage.stage == 0) {
-            revert StageNotFound(stage - 1);
-        }
-
-        if (!previousStage.isFinalized) {
-            revert PreviousStageNotFinalized(stage - 1);
         }
     }
 }
