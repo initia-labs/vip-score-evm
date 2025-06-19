@@ -1,143 +1,66 @@
-# VIP Score
+## Foundry
 
-## Compile
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-```bash
-npm run compile
+Foundry consists of:
+
+-   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+-   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+-   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+-   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+
+## Documentation
+
+https://book.getfoundry.sh/
+
+## Usage
+
+### Build
+
+```shell
+$ forge build
 ```
 
-## Test
+### Test
 
-```bash
-npm run test
+```shell
+$ forge test
 ```
 
-## Constructor
+### Format
 
-Set sender to default member of allowList and set start stage.
-
-```solidity
-constructor(uint64 initStage_) {
-    allowList[msg.sender] = true;
-    initStage = initStage_;
-    createStage(initStage);
-}
+```shell
+$ forge fmt
 ```
 
-## External functions
+### Gas Snapshots
 
-All functions can only be executed by addresses that are in the allow list.
-
-### `prepareStage`
-
-Initialize Stage
-
-```solidity
-function prepareStage(uint64 stage) external
+```shell
+$ forge snapshot
 ```
 
-### `finalizeStage`
+### Anvil
 
-Finalize stage. Once stage finalized, can't change score of that stage anymore.
-
-```solidity
-function finalizeStage(uint64 stage) external
+```shell
+$ anvil
 ```
 
-### `increaseScore`
+### Deploy
 
-Increase score.
-
-```solidity
-function increaseScore(uint64 stage, address addr, uint64 amount) external
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
-### `decreaseScore`
+### Cast
 
-Decrease score.
-
-```solidity
-function decreaseScore(uint64 stage, address addr, uint64 amount) external
+```shell
+$ cast <subcommand>
 ```
 
-### `updateScore`
+### Help
 
-Update the score by setting it to the given amount.
-
-```solidity
-function updateScore(uint64 stage, address addr, uint64 amount) external
-```
-
-### `updateScores`
-
-Update several scores at once.
-
-```solidity
-function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external
-```
-
-### `addAllowList`
-
-Add new address to allow list
-
-```solidity
-function addAllowList(address addr) external
-```
-
-### `removeAllowList`
-
-Remove address from allow list
-
-```solidity
-function removeAllowList(address addr) external
-```
-
-## Public storage
-
-### `stages`
-
-mapping of stage Info
-
-```solidity
-struct StageInfo {
-    uint64 stage;
-    uint64 totalScore;
-    bool isFinalized;
-}
-
-mapping(uint64 => StageInfo) public stages;
-```
-
-### `scores`
-
-mapping of user score
-
-```solidity
-struct ScoreResponse {
-    address addr;
-    uint64 amount;
-    uint64 index;
-}
-
-mapping(uint64 => mapping(address => Score)) public scores; // stage => address => score
-```
-
-## View functions
-
-### `getScores`
-
-Get scores
-
-```solidity
-function getScores(uint64 stage, uint64 offset, uint8 limit) public view returns (ScoreResponse[] memory)
-```
-
-Response type
-
-```solidity
-struct ScoreResponse {
-    address addr;
-    uint64 amount;
-    uint64 index;
-}
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
 ```
