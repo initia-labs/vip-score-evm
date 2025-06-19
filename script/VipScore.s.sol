@@ -6,8 +6,8 @@ import "src/VipScore.sol";
 
 contract DeployVipScore is Script {
     function run() external returns (VipScore deployed) {
-        uint256 pk        = vm.envUint("PRIVATE_KEY");
-        uint64  initStage = uint64(vm.envUint("INIT_STAGE"));
+        uint256 pk = vm.envUint("PRIVATE_KEY");
+        uint64 initStage = uint64(vm.envUint("INIT_STAGE"));
 
         vm.startBroadcast(pk);
         deployed = new VipScore(initStage);

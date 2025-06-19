@@ -12,7 +12,7 @@ contract VipScoreTest is Test {
     function setUp() public {
         owner = address(this);
         other = address(0xBEEF);
-        vip   = new VipScore(1); // initStage = 1
+        vip = new VipScore(1); // initStage = 1
     }
 
     function testOwnerInAllowList() public {
@@ -43,10 +43,10 @@ contract VipScoreTest is Test {
         (, amt) = vip.scores(1, other);
         assertEq(amt, 200);
 
-        address[] memory addrs   = new address[](2);
-        uint64[]  memory amounts = new uint64[](2);
-        addrs[0]   = other;
-        addrs[1]   = owner;
+        address[] memory addrs = new address[](2);
+        uint64[] memory amounts = new uint64[](2);
+        addrs[0] = other;
+        addrs[1] = owner;
         amounts[0] = 100;
         amounts[1] = 500;
 
