@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT 
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
 error PermissionDenied(address deniedAddress);
@@ -9,7 +9,9 @@ error StageFinalized(uint64 stage);
 error PreviousStageNotFinalized(uint64 stage);
 
 event CreateStage(uint64 stage);
+
 event FinalizeStage(uint64 stage);
+
 event UpdateScore(address indexed addr, uint64 indexed stage, uint64 score, uint64 totalScore);
 
 contract VipScore {
@@ -50,7 +52,7 @@ contract VipScore {
         _;
     }
 
-    function finalizeStage(uint64 stage) external onlyAllower{
+    function finalizeStage(uint64 stage) external onlyAllower {
         if (stages[stage].stage == 0) {
             revert StageNotFound(stage);
         }
@@ -63,7 +65,7 @@ contract VipScore {
         createStage(stage + 1);
     }
 
-    function increaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
+    function increaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower {
         // ignore if address is 0x0
         if (addr == address(0x0)) {
             return;
@@ -87,7 +89,7 @@ contract VipScore {
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
 
-    function decreaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
+    function decreaseScore(uint64 stage, address addr, uint64 amount) external onlyAllower {
         // ignore if address is 0x0
         if (addr == address(0x0)) {
             return;
@@ -111,26 +113,26 @@ contract VipScore {
         emit UpdateScore(addr, stage, score.amount, stages[stage].totalScore);
     }
 
-    function updateScore(uint64 stage, address addr, uint64 amount) external onlyAllower{
+    function updateScore(uint64 stage, address addr, uint64 amount) external onlyAllower {
         _updateScore(stage, addr, amount);
     }
 
-    function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external onlyAllower{
+    function updateScores(uint64 stage, address[] calldata addrs, uint64[] calldata amounts) external onlyAllower {
         if (addrs.length != amounts.length) {
             revert AddrsAndAmountsLengthMistmatch({});
         }
 
         uint256 len = addrs.length;
-        for (uint i; i < len; i++) {
+        for (uint256 i; i < len; i++) {
             _updateScore(stage, addrs[i], amounts[i]);
         }
     }
 
-    function addAllowList(address addr) external onlyAllower{
+    function addAllowList(address addr) external onlyAllower {
         allowList[addr] = true;
     }
 
-    function removeAllowList(address addr) external onlyAllower{
+    function removeAllowList(address addr) external onlyAllower {
         delete allowList[addr];
     }
 
@@ -192,7 +194,7 @@ contract VipScore {
 
     function setScoreIndex(uint64 stage, address addr) private {
         // check score exists
-        Score storage score  = scores[stage][addr];
+        Score storage score = scores[stage][addr];
         if (!score.isIndexed) {
             score.isIndexed = true;
             scoreLength[stage] += 1;

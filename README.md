@@ -1,16 +1,34 @@
-# VIP Score
+# VIP Score 
+
+## Install Foundry
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+```
 
 ## Compile
 
 ```bash
-npm run compile
+forge build
 ```
 
 ## Test
 
 ```bash
-npm run test
+forge test
 ```
+
+## Deploy
+
+```bash
+export JSON_RPC_URL=<YOUR_RPC_URL>
+export PRIVATE_KEY=<YOUR_DEPLOYER_PRIVATE_KEY>
+export INIT_STAGE=<STAGE_NUMBER>
+
+forge script script/VipScore.s.sol:DeployVipScore --rpc-url $JSON_RPC_URL --broadcast
+```
+
+# Contract Description
 
 ## Constructor
 
