@@ -2,18 +2,16 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
 
 env:
   FOUNDRY_PROFILE: ci
 
 jobs:
   check:
-    strategy:
-      fail-fast: true
-
-    name: Foundry project
+    name: VIP Score EVM
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +21,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
-
-      - name: Show Forge version
-        run: |
-          forge --version
+          version: stable
 
       - name: Run Forge fmt
         run: |
