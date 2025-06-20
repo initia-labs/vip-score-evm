@@ -1,4 +1,4 @@
-name: CI
+name: VIP Score CI
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   check:
-    name: VIP Score EVM
+    name: Contract Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
