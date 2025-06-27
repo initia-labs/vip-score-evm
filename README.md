@@ -1,24 +1,28 @@
-# VIP Score 
+# VIP Score EVM
 
-## Install Foundry
+VIP Score EVM is a contract used to manage user VIP scores.
 
+It provides functions to prepare, finalize, and update scores for users, as well as manage an allow list of addresses that can perform these actions.
+
+
+# Deployment
+
+> If you don't have installed [Foundry](https://getfoundry.sh/), please follow the [instructions](https://getfoundry.sh/introduction/installation/).
+
+Clone [`vip-score-evm`](https://github.com/initia-labs/vip-score-evm).
+      
 ```bash
-curl -L https://foundry.paradigm.xyz | bash
+git clone https://github.com/initia-labs/vip-score-evm.git
 ```
 
-## Compile
+Compile `VIPScore.sol` contract. 
 
 ```bash
 forge build
 ```
 
-## Test
-
-```bash
-forge test
-```
-
-## Deploy
+Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script.
+`JSON_RPC_URL` should point to your rollup's JSON RPC endpoint. `PRIVATE_KEY` should be the deployer's private key, and `INIT_STAGE` is the initial stage number you will use.
 
 ```bash
 export JSON_RPC_URL=<YOUR_RPC_URL>
@@ -26,6 +30,15 @@ export PRIVATE_KEY=<YOUR_DEPLOYER_PRIVATE_KEY>
 export INIT_STAGE=<STAGE_NUMBER>
 
 forge script script/VipScore.s.sol:DeployVipScore --rpc-url $JSON_RPC_URL --broadcast
+
+# ...
+# ✅  [Success] Hash: 0xd55beed5a745b203b56dc68c9e9141fcfd433c4c47587ce50655a99f5c449abc
+# Contract Address: 0x1F00dfc319F1B74462B2Ef301c3978ee71f0d0E2
+# Block: 238
+# Paid: 0.000000000000525763 ETH (525763 gas * 0.000000001 gwei)
+
+# ✅ Sequence #1 on 1982194020580198 | Total Paid: 0.000000000000525763 ETH (525763 gas * avg 0.000000001 gwei)
+# ...
 ```
 
 # Contract Description
