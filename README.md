@@ -1,8 +1,10 @@
 # VIP Score EVM
 
-VIP Score EVM is a contract used to manage user VIP scores.
+VIP Score EVM is a contract used to manage user Vested Interest Program (VIP) scores.
 
-It provides functions to prepare, finalize, and update scores for users, as well as manage an allow list of addresses that can perform these actions.
+The contract allows you to update scores for users in given stages.
+
+For more information about scoring, please refer to the [VIP Scoring documentation](https://docs.initia.xyz/home/core-concepts/vip/scoring).
 
 
 # Deployment
